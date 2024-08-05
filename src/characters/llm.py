@@ -1,19 +1,29 @@
 from openai import OpenAI
 
-default_temp = 0.7
-default_top_p = 0.7
+import config
 
-def generate(system_prompt, prompt):
-    client = OpenAI(base_url="http://ldllmedt1:5000/v1", api_key="EFLUID_DEV")
-    # client = OpenAI(base_url="http://127.0.0.1:5000/v1", api_key="osef")
+
+def build_messages(system_prompt, user_prompt):
+    return [
+        {"role": "system", "content": system_prompt},
+        {"role": "user", "content": user_prompt},
+    ]
+
+
+def generate(messages=None, system_prompt="", prompt="",
+             temperature=config.default_temp,
+             top_p=config.default_top_p):
+    if messages is None:
+        history = build_messages(system_prompt, prompt)
+    else:
+        history = messages
+
+    client = OpenAI(base_url=config.base_url, api_key=config.api_key)
     completion = client.chat.completions.create(
         model="osef",
-        messages=[
-            {"role": "system", "content": system_prompt},
-            {"role": "user", "content": prompt},
-        ],
-        temperature=default_temp,
-        top_p=default_top_p,
+        messages=history,
+        temperature=temperature,
+        top_p=top_p,
     )
     response = completion.choices[0].message.content
     return response
