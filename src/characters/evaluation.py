@@ -1,73 +1,58 @@
 import llm
 import prompts_fr as prompts
+from character import Character
 
 
-def simulate_character(prompt_user,
-                       name="",
-                       bio="",
-                       trust="",
-                       location="",
-                       time="",
-                       time_group="",
-                       language="",
-                       conversation_summary=""):
-    prompt = prompts.system_prompt_character_skyrim.format(
-        name=name,
-        bio=bio,
-        trust=trust,
-        location=location,
-        time=time,
-        time_group=time_group,
-        language=language,
-        conversation_summary=conversation_summary
+def generate_conversation(character: Character, user_prompts):
+    # def get_history_entry(role, content):
+    #     return {"role": role, "content": content}
+
+    get_history_entry = lambda role, content: {"role": role, "content": content}
+
+    system_prompt = prompts.system_prompt_character_skyrim.format(
+        name=character.get_name(),
+        bio=character.get_new_prompt(),
+        trust="étranger",
+        location="Blancherive",
+        language="French",
+        time="10:04",
+        time_group="",
+        conversation_summary=""
     )
-    return llm.generate(system_prompt=prompt, prompt=prompt_user)
+
+    history = [get_history_entry("system", system_prompt)]
+
+    for user_prompt in user_prompts:
+        if user_prompt is not None:
+            print(" - user: " + user_prompt)
+            history.append(get_history_entry("user", user_prompt))
+
+        response = llm.generate(history, temperature=1, top_p=0.9)
+
+        print(" - assistant: " + response)
+        history.append(get_history_entry("assistant", response))
+
+    return history
 
 
-def evaluate(name, character_prompt):
+def evaluate(character: Character):
     print("******")
     print("SIMULATION")
     print("******")
 
-    prompts_evals = [
-        "salutations l'ami, je passais dans le coin et je t'ai trouvé sympathique, tu sais où se trouve l'auberge la plus proche ? J'te paie un hydromel !",
-        "tu fais quoi dans le vie ?",
-        "je viens d'arriver dans le coin et j'ai besoin d'or pour réparer mon armure. On m'a dit que tu pouvais m'aider, est-ce que t'as du travail à me proposer ?",
-        "t'as entendu parler du dragon qui rode ?",
-        "j'ai un travail bien payé à te proposer, c'est pas dangereux mais pas très légal. Alors ça te tente quelques pièces d'or ?",
-        "hé sac à merde, dégage de mon chemin ou je te découpe en rondelles !"
-    ]
+    for user_prompts in prompts.prompts_evals:
 
-    for prompt_eval in prompts_evals:
-        response = simulate_character(prompt_eval,
-                                      name=name,
-                                      bio=character_prompt,
-                                      trust="étranger",
-                                      location="Blancherive",
-                                      language="Français")
-        print("Sample : ")
-        print(" - " + prompt_eval)
-        print(" - " + response)
-        print("______")
-
-        messages = [
-            {"role": "system", "content": prompts.system_prompt_character_evaluation},
-            {"role": "user", "content": prompt_eval},
-            {"role": "assistant", "content": response},
-        ]
+        history = []
+        for chat in generate_conversation(character, user_prompts):
+            history.append("-{role}: {content}".format(role=chat["role"],
+                                                       content=chat["content"]))
 
         print("> Evaluation")
-        response_eval = llm.generate(messages=messages,
-                                     temperature=0.4,
-                                     top_p=0.4)
+
+        response_eval = llm.generate(system_prompt=prompts.system_prompt_character_evaluation,
+                                     prompt=prompts.user_prompt_character_evaluation.format(bio=character.get_new_prompt(), chat_history=history),
+                                     temperature=0.9,
+                                     top_p=0.8)
 
         print(response_eval)
-
-
-        # messages.append({"role": "assistant", "content": response_eval})
-        # messages.append({"role": "user", "content": prompts.system_prompt_character_evaluation_2})
-        # response_final_eval = llm.generate(messages=messages,
-        #                              temperature=0.4,
-        #                              top_p=0.4)
-        # print("Final eval: " + response_final_eval)
         print("______")

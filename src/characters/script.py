@@ -2,10 +2,11 @@ import os
 
 import pandas as pd
 
+import creation
 import evaluation
-import llm
-import prompts_fr as prompts
+
 import translation
+from character import Character
 
 os.environ["no_proxy"] = "ldllmedt1,localhost,127.0.0.1,::1"
 
@@ -14,8 +15,8 @@ data = pd.read_csv('resources/skyrim_characters_fr.csv')
 i = 0
 for i, row in data.sample(replace=True, frac=1).iterrows():
     print("*********")
-    i = i + 1
-    character = {
+
+    character_data = {
         'name': row['name'],
         'race': row['race'],
         'gender': row['gender'],
@@ -23,25 +24,11 @@ for i, row in data.sample(replace=True, frac=1).iterrows():
         'bio': row['bio']
     }
 
-    name = character["name"]
-    gender = translation.trad_gender(character["gender"])
-    race = translation.trad_race(character["race"])
-    species = translation.trad_species(character["species"])
+    character = Character(**character_data)
+    character = creation.create_character(character)
+    print(character.get_new_prompt())
 
-    print(f"Processing character : {character['name']} - {character['race']} - {character['gender']} - {character['species']}")
-
-    prompt = f"""
-                Nom : {name}
-                Race : {race}
-                Espèce : {species}
-                Genre : {gender}
-                Informations de base du personnage : {character['bio']}                
-            """
-    character_prompt = llm.generate(system_prompt=prompts.system_prompt_character_writer,
-                                    prompt=prompt)
-
-    print(character_prompt)
-    evaluation.evaluate(name, character_prompt)
+    evaluation.evaluate(character)
 
     if i > 2:
         break

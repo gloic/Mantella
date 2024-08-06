@@ -8,6 +8,11 @@ Tu es Alvor, un forgeron respecté de Rivebois. Depuis ton plus jeune âge, tu a
 Ton caractère est celui d'un homme travailleur et dévoué, toujours prêt à aider tes voisins en cas de besoin. Malgré la dureté de ton travail, tu as un cœur d'or et un sens aigu de la justice. Tes amis et ta famille te considèrent comme une personne fiable et protectrice.
 Tu as traversé des moments difficiles, notamment lorsque des bandits ont attaqué Riverwood, mais tu es toujours resté fort et déterminé à protéger ta communauté. Ta forge est non seulement un lieu de travail, mais aussi un refuge pour ceux qui en ont besoin, et tu es fier de contribuer à la sécurité et au bien-être de ton village.
 """
+user_prompt_character_writer = """Nom : {name}
+                    Race : {race}
+                    Espèce : {species}
+                    Genre : {gender}
+                    Informations de base du personnage : {bio}"""
 
 # system_prompt_character_writer = """Créez une personnalité unique et captivante pour ce personnage, en vous inspirant de ses antécédents et de son histoire, tels que décrits dans le wiki du jeu.
 # Concentrez-vous sur ses traits de caractère, son humeur et sa backstory, tout en ignorant délibérément toute information relative à son apparence physique, car celle-ci est non pertinente pour les interactions.
@@ -31,22 +36,41 @@ La conversation se déroule en {language}.\n\n
 {conversation_summary}
 """
 
-system_prompt_character_evaluation = """Voici une conversation qui se déroule dans le monde de Bordeciel (une contrée médiévale fantastique). La discussion est entre un joueur et un personnage dans un contexte d'un jeu de rôle. 
+system_prompt_character_evaluation = """Voici une conversation qui se déroule dans le monde de Bordeciel (une contrée médiévale fantastique). La discussion est entre un joueur et un personnage dans le contexte d'un jeu de rôle. 
 Évalue cette conversation en fonction des critères suivants : Cohérence avec le personnage, Cohérence avec l'univers, Pertinence, Fluidité et naturel, Originalité. 
 Donne une note de 1 à 5 pour chaque critère, puis fais la moyenne des notes pour obtenir une évaluation globale de la réponse.
 Attention : utiliser une notation numérique uniquement, l'usage d'émojis ou d'étoiles pour noter est formellement prohibée et provoquera la mort d'innocents chatons.
 
-'''
-{conversation}
-'''
+Cohérence avec le personnage:
+Cohérence avec l'univers:
+Pertinence:
+Fluidité et naturel: 
+Originalité: 
 
-Cohérence avec le personnage : 
-Cohérence avec l'univers : 
-Pertinence : 
-Fluidité et naturel : 
-Originalité : 
-
-Note finale : 
- 
+Note finale: 
 """
-system_prompt_character_evaluation_2 = "Quelle est la note globale ?"
+user_prompt_character_evaluation = "{bio}\n\n{chat_history}"
+
+prompts_evals = [
+    [
+        "salutations l'ami, je suis un enfant de Dragon",
+        "je passais dans le coin et je t'ai trouvé sympathique, tu sais où se trouve l'auberge la plus proche ?",
+        "Suis-moi, je te paie un hydromel"
+    ],
+    [
+        "tu fais quoi dans le vie ? Moi je suis enfant de dragon !"],
+    [
+        "salutations, on m'a dit que tu pouvais m'aider",
+        "j'ai besoin d'or pour réparer mon armure, est-ce que t'as du travail à me proposer ?"
+    ],
+    ["t'as entendu parler du dragon qui rode ?",
+     ""
+    ],
+
+    [
+        "j'ai un travail bien payé à te proposer, c'est pas dangereux mais pas très légal. Alors ça te tente quelques pièces d'or ?"],
+    [
+        "hé sac à merde, dégage de mon chemin ou je te découpe en rondelles !",
+        "tu va tâter de ma lame, prépare toi à mourir vil félon !"
+    ]
+]
