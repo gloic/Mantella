@@ -36,10 +36,12 @@ La conversation se déroule en {language}.\n\n
 {conversation_summary}
 """
 
-system_prompt_character_evaluation = """Voici une conversation qui se déroule dans le monde de Bordeciel (une contrée médiévale fantastique). La discussion est entre un joueur et un personnage dans le contexte d'un jeu de rôle. 
-Évalue cette conversation en fonction des critères suivants : Cohérence avec le personnage, Cohérence avec l'univers, Pertinence, Fluidité et naturel, Originalité. 
+system_prompt_character_evaluation = """Voici une conversation qui se déroule dans le monde de Bordeciel (une contrée médiévale fantastique). La discussion est entre un joueur ({name}) et un personnage dans le contexte d'un jeu de rôle. 
+Ton rôle est d'évaluer les réponses fournies par le personnage {name}. Cette conversation est fictive, elle a pour objectif de révéler certains aspects du personnage. L'évaluation de la conversation va permetrre d'ajuster le prompt de ce personnage, géré par un LLM. 
+Notes cette conversation en fonction des critères suivants : Cohérence avec le personnage, Cohérence avec l'univers, Pertinence, Fluidité et naturel, Originalité. 
 Donne une note de 1 à 5 pour chaque critère, puis fais la moyenne des notes pour obtenir une évaluation globale de la réponse.
 Attention : utiliser une notation numérique uniquement, l'usage d'émojis ou d'étoiles pour noter est formellement prohibée et provoquera la mort d'innocents chatons.
+Fournis une courte explication justifiant la note finale. les notes vont de 1 à 5, 5 étant la meilleure note.
 
 Cohérence avec le personnage:
 Cohérence avec l'univers:
