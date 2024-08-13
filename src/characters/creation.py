@@ -1,18 +1,25 @@
-import llm
-import prompts_fr as prompts
 from character import Character
+from llm import Llm
 
 
-def create_character(character: Character):
-    print(f"Processing character : {character.get_name()} - {character.get_race()} - {character.get_gender()} - {character.get_species()}")
-    prompt = prompts.user_prompt_character_writer.format(
-        name=character.get_name(),
-        race=character.get_race(),
-        species=character.get_species(),
-        gender=character.get_gender(),
-        bio=character.get_bio()
-    )
+class Creation:
+    def __init__(self, params=None, llm: Llm = None):
+        self.params = params or {}
+        self.system_prompt_character_writer = self.params.get('system_prompt_character_writer', None)
+        self.user_prompt_character_writer = self.params.get('user_prompt_character_writer', None)
 
-    new_prompt = llm.generate(system_prompt=prompts.system_prompt_character_writer, prompt=prompt)
-    character.set_new_prompt(new_prompt)
-    return character
+        self.llm = llm
+
+    def create_character(self, character: Character):
+        print(f"Processing character : {character.get_name()} - {character.get_race()} - {character.get_gender()} - {character.get_species()}")
+        prompt = self.user_prompt_character_writer.format(
+            name=character.get_name(),
+            race=character.get_race(),
+            species=character.get_species(),
+            gender=character.get_gender(),
+            bio=character.get_bio()
+        )
+
+        new_prompt = self.llm.generate(system_prompt=self.system_prompt_character_writer, prompt=prompt)
+        character.set_new_prompt(new_prompt)
+        return character
