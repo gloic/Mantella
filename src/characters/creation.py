@@ -5,7 +5,7 @@ from llm import Llm
 class Creation:
     def __init__(self, params=None, llm: Llm = None):
         self.params = params or {}
-        self.system_prompt_character_writer = self.params.get('system_prompt_character_writer', None)
+        self.system_prompt_character_writer = self.params.get('system_prompt_character_writer2', None)
         self.user_prompt_character_writer = self.params.get('user_prompt_character_writer', None)
 
         self.llm = llm
